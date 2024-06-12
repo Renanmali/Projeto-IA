@@ -170,9 +170,6 @@ def run(image_path):
     with open('predicao_neutral.txt', 'a') as file:
         file.write(prediction + "\n")
 
-    cv2.waitKey(100)  # Espera 5 segundos antes de fechar
-    cv2.destroyAllWindows()
-
 if __name__ == "__main__":
     for i in range (0,1000):
 
