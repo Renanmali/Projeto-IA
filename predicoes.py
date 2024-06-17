@@ -22,17 +22,17 @@ MODELS_PATH = arg0[:-len(os.path.basename(arg0))]+'saved_models/'
 
 emotions = {
     0: ['Angry', (0,0,255), (255,255,255)],
-    1: ['Disgust', (0,102,0), (255,255,255)],
-    2: ['Fear', (255,255,153), (0,51,51)],
-    3: ['Happy', (153,0,153), (255,255,255)],
-    4: ['Sad', (255,0,0), (255,255,255)],
-    5: ['Surprise', (0,255,0), (255,255,255)],
-    6: ['Neutral', (160,160,160), (255,255,255)]
+    #1: ['Disgust', (0,102,0), (255,255,255)],
+    #2: ['Fear', (255,255,153), (0,51,51)],
+    1: ['Happy', (153,0,153), (255,255,255)],
+    2: ['Sad', (255,0,0), (255,255,255)],
+    #5: ['Surprise', (0,255,0), (255,255,255)],
+    3: ['Neutral', (160,160,160), (255,255,255)]
 }
 num_classes = len(emotions)
 input_shape = (48, 48, 1)
-weights_1 = MODELS_PATH+'vggnet.h5'
-weights_2 = MODELS_PATH+'vggnet_up.h5'
+weights_1 = MODELS_PATH+'vggnet_trained.h5'
+weights_2 = MODELS_PATH+'vggnet_trained_model.h5'
 
 class VGGNet(Sequential):
     def __init__(self, input_shape, num_classes, checkpoint_path, lr=1e-3):
@@ -171,7 +171,7 @@ def run(image_path):
         file.write(prediction + "\n")
 
 if __name__ == "__main__":
-    for i in range (0,1000):
+    for i in range (1000,2000):
 
         image_path = "neutral/ffhq_" + str(i) + ".png"
         

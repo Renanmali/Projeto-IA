@@ -3,14 +3,16 @@ import numpy as np
 import cv2
 import mediapipe as mp
 
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers.experimental.preprocessing import Rescaling
-from tensorflow.keras.layers import Conv2D, MaxPool2D, Dense, Dropout, Flatten
-from tensorflow.keras.layers import BatchNormalization
-from tensorflow.keras.losses import categorical_crossentropy
-from tensorflow.keras.optimizers import Adam
-
 import tensorflow as tf
+
+from tf.keras.models import Sequential
+from tf.keras.layers.experimental.preprocessing import Rescaling
+from tf.keras.layers import Conv2D, MaxPool2D, Dense, Dropout, Flatten
+from tf.keras.layers import BatchNormalization
+from tf.keras.losses import categorical_crossentropy
+from tf.keras.optimizers import Adam
+
+
 
 import sys    
 import os.path
