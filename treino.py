@@ -123,6 +123,7 @@ history = model.fit(
     validation_data=val_generator,
     validation_steps=val_generator.samples // batch_size,
     epochs=epochs,
+    callbacks=[early_stopping, reduce_lr, checkpoint]
 )
 
 # Salvando o modelo completo
