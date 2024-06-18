@@ -89,7 +89,7 @@ model_2 = VGGNet(input_shape, num_classes, weights_2)
 model_2.load_weights(model_2.checkpoint_path)
 
 
-# # **Inference**
+# **Inference**
 
 mp_face_detection = mp.solutions.face_detection
 mp_drawing = mp.solutions.drawing_utils

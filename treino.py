@@ -11,6 +11,11 @@ from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau, ModelCheckpoint
 from tensorflow.keras.regularizers import l2
 
+# Fixar sementes aleatórias para reprodutibilidade
+seed = 42
+np.random.seed(seed)
+tf.random.set_seed(seed)
+
 # Definindo os diretórios de treino e validação
 train_dir = 'training'
 val_dir = 'validation'
@@ -30,7 +35,7 @@ train_datagen = ImageDataGenerator(
 # Gerador de dados para validação (sem aumento de dados)
 val_datagen = ImageDataGenerator(rescale=1./255)
 
-batch_size = 32
+batch_size = 64
 img_height = 48
 img_width = 48
 
@@ -39,21 +44,22 @@ train_generator = train_datagen.flow_from_directory(
     target_size=(img_height, img_width),
     color_mode='grayscale',
     batch_size=batch_size,
-    class_mode='categorical'
+    class_mode='categorical',
+    seed=seed  # Fixar semente no gerador de dados
 )
 
-# Carregando os dados de validação
 val_generator = val_datagen.flow_from_directory(
     val_dir,
-    target_size=(48, 48),
+    target_size=(img_height, img_width),
     color_mode='grayscale',
     batch_size=batch_size,
-    class_mode='categorical'
+    class_mode='categorical',
+    seed=seed  # Fixar semente no gerador de dados
 )
 
-# Definição do modelo VGGNet
+# Definição do modelo VGGNet com regularização adicional
 class VGGNet(Sequential):
-    def __init__(self, input_shape, num_classes, lr=1e-3):
+    def __init__(self, input_shape, num_classes, checkpoint_path, lr=1e-3):
         super().__init__()
         self.add(Rescaling(1./255, input_shape=input_shape))
         self.add(Conv2D(64, (3, 3), activation='relu', kernel_initializer='he_normal'))
@@ -89,13 +95,14 @@ class VGGNet(Sequential):
         self.add(Dense(1024, activation='relu'))
         self.add(Dropout(0.5))
         self.add(Dense(256, activation='relu'))
-        self.add(Dropout(0.5))
 
         self.add(Dense(num_classes, activation='softmax'))
 
         self.compile(optimizer=Adam(learning_rate=lr),
-                     loss=categorical_crossentropy,
-                     metrics=['accuracy'])
+                    loss=categorical_crossentropy,
+                    metrics=['accuracy'])
+        
+        self.checkpoint_path = checkpoint_path
 
 # Instanciando o modelo
 input_shape = (48, 48, 1)
@@ -105,10 +112,11 @@ model = VGGNet(input_shape, num_classes)
 # Caminho para os pesos salvos
 weights_path = 'saved_models/vggnet_trained.h5'
 
-# Carregar pesos se eles existirem
 if os.path.exists(weights_path):
-    model.load_weights(weights_path)
+    #model.load_weights(weights_path)
     print("\n\n\n>>>>>>>>>>>>>>>>>>Pesos carregados com sucesso.")
+else:
+    print("\n\n\n>>>>>>>>>>>>>>>>>>Nenhum peso salvo encontrado, treinamento começará do zero.")
 
 # Callbacks
 early_stopping = EarlyStopping(monitor='val_loss', patience=10, restore_best_weights=True)
@@ -116,7 +124,7 @@ reduce_lr = ReduceLROnPlateau(monitor='val_loss', factor=0.2, patience=5, min_lr
 checkpoint = ModelCheckpoint(weights_path, monitor='val_loss', save_best_only=True, save_weights_only=True)
 
 # Treinamento do modelo
-epochs = 100
+epochs = 10
 history = model.fit(
     train_generator,
     steps_per_epoch=train_generator.samples // batch_size,
