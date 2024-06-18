@@ -1,4 +1,6 @@
+import os
 import tensorflow as tf
+os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
 import json
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.models import Sequential
@@ -124,7 +126,6 @@ except Exception as e:
     print("Erro ao carregar os pesos:", str(e))
 
 print("\n\n\n\n\n")
-print(model.summary())
 print("\n\n\n\n\n")
 
 # Treinamento do modelo
